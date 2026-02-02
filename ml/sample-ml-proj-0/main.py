@@ -1,6 +1,5 @@
-def main():
-    print("Hello from sample-ml-proj-0!")
+from src import index
 
 
 if __name__ == "__main__":
-    main()
+    index.main()
