@@ -15,34 +15,44 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '21'
-          distribution: 'graalvm'
-          cache: 'gradle'
+          java-version: "21"
+          distribution: "graalvm"
+          cache: "gradle"
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v6
+      - name: Install uv Python 3.13
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: '3.13'
-          cache: 'poetry'
+          enable-cache: "auto"
+          python-version: "3.13"
+          working-directory: ml
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
       - name: Execute Tests and Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-            for dir in python-apps/*; do
-              if [ -f "$dir/pyproject.toml" ]; then
-                cd $dir
-                poetry install
-                poetry run pytest --cov=. --cov-report=xml:../../$(basename $dir)_coverage.xml
-                cd ../..
-              fi
-            done
-            ./gradlew build sonar --info
+          # 1. Sync the entire workspace (all modules) at once
+          uv sync --all-packages
+
+          # 2. Run tests for all workspace members
+          # We generate individual XML reports so Sonar can map them to the right files
+          for module in $(uv tree --depth 1 | grep 'project' | awk '{print $2}'); do
+             echo "Running tests for $module..."
+             uv run pytest "ml/$module" \
+               --cov="ml/$module" \
+               --cov-report=xml:"${module}_coverage.xml"
+          done
+
+          # 3. Final Java build and Sonar Scan
+          ./gradlew build sonar --info
