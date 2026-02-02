@@ -1,0 +1,6 @@
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "opticsquid-1",
+    "projectKey": "opticSquid_broker-risk-management-system"
+  }
+}
