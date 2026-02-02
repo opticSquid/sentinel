@@ -1,0 +1,10 @@
+plugins {
+  id "org.sonarqube" version "7.1.0.6387"
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "opticSquid_broker-risk-management-system"
+    property "sonar.organization", "opticsquid-1"
+  }
+}
