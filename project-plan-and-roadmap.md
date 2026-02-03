@@ -1,4 +1,4 @@
-# Project Sentinel - Broker Risk Management System
+# Project Sentinel - Broker Order and Risk Management System
 ## Incremental Project Plan & Learning Roadmap
 
 ### Purpose
