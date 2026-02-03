@@ -1,7 +1,7 @@
 [project]
-name = "broker-risk-management-system"
+name = "Sentinel"
 version = "0.1.0"
-description = "Add your description here"
+description = "Broker Risk and Order Management System"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
